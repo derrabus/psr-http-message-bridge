@@ -59,7 +59,7 @@ class Kernel44 extends SymfonyKernel
         $bundleConfig = [
             'message_converters' => ['enabled' => true],
         ];
-        if ('auto' !== $this->implementation) {
+        if ('auto' !== $this->implementation && 'minimal' !== $this->implementation) {
             $bundleConfig['message_factories'] = [
                 'enabled' => true,
                 'implementation' => $this->implementation,
@@ -69,7 +69,10 @@ class Kernel44 extends SymfonyKernel
         $container->loadFromExtension('psr_http_message', $bundleConfig);
 
         $container->register('logger', NullLogger::class);
-        $container->register(PsrRequestController::class)->setPublic(true)->setAutowired(true);
-        $container->register(AllFactories::class)->setPublic(true)->setAutowired(true);
+
+        if ('minimal' !== $this->implementation) {
+            $container->register(PsrRequestController::class)->setPublic(true)->setAutowired(true);
+            $container->register(AllFactories::class)->setPublic(true)->setAutowired(true);
+        }
     }
 }

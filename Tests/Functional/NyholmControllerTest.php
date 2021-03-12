@@ -28,6 +28,10 @@ final class NyholmControllerTest extends ControllerTest
 
     protected static function getImplementation(): string
     {
+        if (!class_exists(Psr17Factory::class)) {
+            self::markTestSkipped('This test requires nyholm/psr7.');
+        }
+
         return 'nyholm';
     }
 }

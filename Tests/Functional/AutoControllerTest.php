@@ -25,6 +25,10 @@ final class AutoControllerTest extends ControllerTest
 
     protected static function getImplementation(): string
     {
+        if (!class_exists(Psr17Factory::class)) {
+            self::markTestSkipped('This test requires nyholm/psr7.');
+        }
+
         return 'auto';
     }
 }

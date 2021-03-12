@@ -61,7 +61,7 @@ class Kernel extends SymfonyKernel
         $bundleConfig = [
             'message_converters' => ['enabled' => true],
         ];
-        if ('auto' !== $this->implementation) {
+        if ('auto' !== $this->implementation && 'minimal' !== $this->implementation) {
             $bundleConfig['message_factories'] = [
                 'enabled' => true,
                 'implementation' => $this->implementation,
@@ -72,8 +72,13 @@ class Kernel extends SymfonyKernel
 
         $container->services()
             ->set('logger', NullLogger::class)
-            ->set(PsrRequestController::class)->public()->autowire()
-            ->set(AllFactories::class)->public()->autowire()
         ;
+
+        if ('minimal' !== $this->implementation) {
+            $container->services()
+                ->set(PsrRequestController::class)->public()->autowire()
+                ->set(AllFactories::class)->public()->autowire()
+            ;
+        }
     }
 }

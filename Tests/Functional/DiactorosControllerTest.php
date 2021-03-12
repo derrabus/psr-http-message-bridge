@@ -25,6 +25,10 @@ final class DiactorosControllerTest extends ControllerTest
 
     protected static function getImplementation(): string
     {
+        if (!class_exists(ServerRequestFactory::class)) {
+            self::markTestSkipped('This test requires nyholm/psr7.');
+        }
+
         return 'diactoros';
     }
 }
