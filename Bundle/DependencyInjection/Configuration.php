@@ -14,6 +14,7 @@ namespace Symfony\Bridge\PsrHttpMessage\Bundle\DependencyInjection;
 use Laminas\Diactoros\RequestFactory;
 use Laminas\Diactoros\ServerRequestFactory;
 use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\Http\Message\ServerRequestFactoryInterface;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -33,7 +34,7 @@ final class Configuration implements ConfigurationInterface
                 ->children()
                     ->enumNode('implementation')
                         ->info('The PSR-7 implementation to use. By default, the bundle will configure the Nyholm implementation if it\'s available.')
-                        ->values(['nyholm', 'diactoros'])
+                        ->values(['nyholm', 'diactoros', 'custom'])
                         ->defaultValue(class_exists(Psr17Factory::class) || !class_exists(ServerRequestFactory::class) ? 'nyholm' : 'diactoros')
                         ->validate()
                             ->ifTrue(function ($value) {
@@ -44,6 +45,11 @@ final class Configuration implements ConfigurationInterface
                             ->ifTrue(function ($value) {
                                 return 'diactoros' === $value && !class_exists(RequestFactory::class);
                             })->thenInvalid('Cannot configure Diactoros. Try running "composer require laminas/laminas-diactoros".')
+                        ->end()
+                        ->validate()
+                            ->ifTrue(function ($value) {
+                                return 'custom' === $value && !class_exists(ServerRequestFactoryInterface::class);
+                            })->thenInvalid('There is no PSR-17 implementation. Try running "composer require nyholm/psr7".')
                         ->end()
                     ->end()
                 ->end()
